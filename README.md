@@ -12,10 +12,6 @@
     ```
     <script src="path/customContextMenu.js?id=1&config=/path/config.txt"></script>
     ```
-    或
-    ```
-    <script src="/static/js/customContextMenu.js?id=1&config=/path/config.txt"></script>
-    ```
     其中，`id` 是一个可选参数，可用于对菜单进行标识；`config` 是一个可选参数，用于指定配置文件的路径。如果未提供 `config` 参数，将使用硬编码的菜单项作为备选方案。
    
 
