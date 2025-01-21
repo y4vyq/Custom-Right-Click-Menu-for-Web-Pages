@@ -13,12 +13,12 @@
                 params[parts[0]] = parts[1];
             });
         }
-        params.id = params.id || 'default'; 
         return params;
     }
 
     var scriptParams = getScriptParams();
-    var id = scriptParams.id;
+    // 移除 id 相关代码
+    // var id = scriptParams.id;
     var configPath = scriptParams.config;
     var options = [];
 
