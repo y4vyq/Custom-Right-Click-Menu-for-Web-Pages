@@ -1,5 +1,4 @@
 (function() {
-    // 从 script 标签中获取参数
     function getScriptParams() {
         var scripts = document.getElementsByTagName('script');
         var lastScript = scripts[scripts.length - 1];
@@ -13,12 +12,12 @@
                 params[parts[0]] = parts[1];
             });
         }
+        params.id = params.id || 'default'; 
         return params;
     }
 
     var scriptParams = getScriptParams();
-    // 移除 id 相关代码
-    // var id = scriptParams.id;
+    var id = scriptParams.id;
     var configPath = scriptParams.config;
     var options = [];
 
@@ -39,7 +38,40 @@
             xhr.open('GET', configPath, true);
             xhr.onload = function() {
                 if (xhr.status >= 200 && xhr.status < 300) {
-                    options = JSON.parse(xhr.responseText);
+                    var config = JSON.parse(xhr.responseText);
+                    // 解析菜单项
+                    options = config.options || [];
+                    // 检查是否有 style 部分，进行样式添加
+                    if (config.style) {
+                        var style = document.createElement('style');
+                        style.textContent = config.style;
+                        document.head.appendChild(style);
+                    } else {
+                        // 没有 style 部分，使用硬编码样式
+                        var style = document.createElement('style');
+                        style.textContent = `
+                            #customContextMenu {
+                                display: none;
+                                position: absolute;
+                                background-color: #fff;
+                                border: 1px solid #ccc;
+                                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+                                list-style: none;
+                                padding: 5px 0;
+                                width: 150px;
+                                z-index: 1000;
+                                transition: opacity 0.3s ease-in-out;
+                            }
+                            #customContextMenu li {
+                                padding: 8px 12px;
+                                cursor: pointer;
+                            }
+                            #customContextMenu li:hover {
+                                background-color: #f0f0f0;
+                            }
+                        `;
+                        document.head.appendChild(style);
+                    }
                     resolve(options);
                 } else {
                     reject(xhr.statusText);
@@ -52,30 +84,6 @@
         });
     }
 
-    // 创建并添加样式
-    var style = document.createElement('style');
-    style.textContent = `
-        #customContextMenu {
-            display: none;
-            position: absolute;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            list-style: none;
-            padding: 5px 0;
-            width: 150px;
-            z-index: 1000;
-            transition: opacity 0.3s ease-in-out;
-        }
-        #customContextMenu li {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-        #customContextMenu li:hover {
-            background-color: #f0f0f0;
-        }
-    `;
-    document.head.appendChild(style);
 
     // 创建自定义菜单并添加到页面
     var menu = document.createElement('ul');
